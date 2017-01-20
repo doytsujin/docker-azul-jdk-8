@@ -1,31 +1,39 @@
-# Trusty 
-FROM ubuntu:14.04
+# Follows guidance from http://www.projectatomic.io/docs/docker-image-author-guidance/
+
+# Deal with PID 1 issue:
+FROM phusion/baseimage:latest
 
 MAINTAINER Ron Kurr <kurr@kurron.org>
 
+# Create non-root user
+RUN groupadd --system microservice --gid 444 && \
+useradd --uid 444 --system --gid microservice --home-dir /home/microservice --create-home --shell /sbin/nologin --comment "Docker image user" microservice && \
+chown -R microservice:microservice /home/microservice
+
+# default to being in the user's home directory
+WORKDIR /home/microservice
+
+#
+# UTF-8 by default
+#
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+#
+# Pull Zulu OpenJDK binaries from official repository:
+#
 ENV DEBIAN_FRONTEND noninteractive
 
-# Install JDK 8 
-RUN apt-get --quiet update && \
-    apt-get --quiet --yes install wget && \
-    apt-get clean && \
-    wget --quiet \
-         --output-document=/jdk-8.tar.gz \
-         http://cdn.azul.com/zulu/bin/zulu8.13.0.5-jdk8.0.72-linux_x64.tar.gz && \
-    mkdir -p /usr/lib/jvm && \
-    tar --gunzip --extract --verbose --file /jdk-8.tar.gz --directory /usr/lib/jvm && \
-    rm -f /jdk-8.tar.gz && \
-    chown -R root:root /usr/lib/jvm
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9
+RUN echo "deb http://repos.azulsystems.com/ubuntu stable main" >> /etc/apt/sources.list.d/zulu.list
+RUN apt-get -qq update && \
+    apt-get -qqy install zulu-8=8.19.0.1 && \
+    apt-get clean
 
-# set the environment variables 
-ENV JDK_HOME /usr/lib/jvm/zulu8.13.0.5-jdk8.0.72-linux_x64
-ENV JAVA_HOME /usr/lib/jvm/zulu8.13.0.5-jdk8.0.72-linux_x64
-ENV PATH $PATH:$JAVA_HOME/bin
+# Switch to the non-root user
+USER microservice
 
-# Force Docker to use UTF-8 encodings
-ENV LANG C.UTF-8
-
-# export meta-data about this container
-LABEL org.kurron.java.vendor="Azul"  org.kurron.java.version="1.8.0_72"
-
-
+# default to showing the JDK version
+CMD ['java', '-version']

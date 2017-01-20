@@ -1,5 +1,7 @@
 # Overview
 This project is a simple Docker image that provides the [Azul Systems JDK](http://www.azul.com/downloads/zulu/).
+It is based on the [Phusion Base Image](https://hub.docker.com/r/phusion/baseimage/) which, among other things,
+handles the PID 1 issue.
 
 # Prerequisites
 * a working [Docker](http://docker.io) engine
@@ -15,8 +17,7 @@ Docker will automatically install the newly built image into the cache.
 
 ## Launching The Image
 
-`docker-compose up` will launch the image allowing you to begin working on projects. The Docker Compose file is 
-configured to mount your home directory into the container.  
+`docker-compose up` will launch the image, show the JVM's version number and exit.  
 
 # Troubleshooting
 
@@ -24,4 +25,3 @@ configured to mount your home directory into the container.
 This project is licensed under the [Apache License Version 2.0, January 2004](http://www.apache.org/licenses/).
 
 # List of Changes
-
