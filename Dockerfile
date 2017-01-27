@@ -30,6 +30,19 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV JAVA_HOME /usr/lib/jvm/zulu-8-amd64
 ENV JDK_HOME /usr/lib/jvm/zulu-8-amd64
 
+# used to set common JVM tunings in the launch script
+ENV JVM_HEAP_MIN 128m
+ENV JVM_HEAP_MAX 512m
+ENV JVM_METASPACE 512m
+ENV JVM_CMS_OCCUPANCY 70
+ENV JVM_GC_LOG_PATH /var/logs
+ENV JVM_GC_LOG_FILE_COUNT 10
+ENV JVM_GC_LOG_FILE_SIZE 100M
+ENV JVM_DNS_TTL 30
+ENV JVM_JMX_HOST 127.0.0.1
+ENV JVM_JMX_PORT 9898
+ENV JVM_JMX_RMI_PORT 9999
+
 # default to showing the JDK version
 CMD ['java', '-version']
 
@@ -42,3 +55,6 @@ RUN apt-get -qq update && \
 
 # Switch to the non-root user
 USER microservice
+
+# Copy the default JVM launch script for those who don't want to write their own
+ADD launch-jvm.sh /home/microservice/launch-jvm.sh
