@@ -53,6 +53,10 @@ RUN apt-get -qq update && \
     apt-get -qqy install zulu-8=8.19.0.1 && \
     apt-get clean
 
+# many uses of this container run Docker so let's install the binaries
+RUN curl -fsSLO https://get.docker.com/builds/Linux/x86_64/docker-1.13.1.tgz && tar --strip-components=1 -xvzf docker-1.13.1.tgz -C /usr/local/bin
+RUN curl -L "https://github.com/docker/compose/releases/download/1.11.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
 # Switch to the non-root user
 USER microservice
 
