@@ -50,7 +50,7 @@ CMD ['java', '-version']
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9
 RUN echo "deb http://repos.azulsystems.com/ubuntu stable main" >> /etc/apt/sources.list.d/zulu.list
 RUN apt-get -qq update && \
-    apt-get -qqy install zulu-8=8.19.0.1 && \
+    apt-get -qqy install zulu-8=8.20.0.5 && \
     apt-get clean
 
 # many uses of this container run Docker so let's install the binaries
