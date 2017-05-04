@@ -25,3 +25,5 @@ Docker will automatically install the newly built image into the cache.
 This project is licensed under the [Apache License Version 2.0, January 2004](http://www.apache.org/licenses/).
 
 # List of Changes
+
+* update to OpenJDK 64-Bit Server VM (Zulu 8.21.0.1-linux64) (build 25.131-b11, mixed mode)

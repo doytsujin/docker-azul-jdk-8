@@ -50,12 +50,12 @@ CMD ['java', '-version']
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9
 RUN echo "deb http://repos.azulsystems.com/ubuntu stable main" >> /etc/apt/sources.list.d/zulu.list
 RUN apt-get -qq update && \
-    apt-get -qqy install zulu-8=8.20.0.5 && \
+    apt-get -qqy install zulu-8=8.21.0.1 && \
     apt-get clean
 
 # many uses of this container run Docker so let's install the binaries
-RUN curl -fsSLO https://get.docker.com/builds/Linux/x86_64/docker-1.13.1.tgz && tar --strip-components=1 -xvzf docker-1.13.1.tgz -C /usr/local/bin
-RUN curl -L "https://github.com/docker/compose/releases/download/1.11.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && chmod 0555 /usr/local/bin/docker-compose
+RUN curl -fsSLO https://get.docker.com/builds/Linux/x86_64/docker-17.04.0-ce.tgz && tar --strip-components=1 -xvzf docker-17.04.0-ce.tgz -C /usr/local/bin
+RUN curl -L "https://github.com/docker/compose/releases/download/1.13.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && chmod 0555 /usr/local/bin/docker-compose
 
 # Switch to the non-root user
 USER microservice
