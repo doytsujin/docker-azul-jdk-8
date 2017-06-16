@@ -11,11 +11,7 @@ set -e
 # approprivate for a single core environment.  We're using the new CGroup-aware
 # memory settings.
 
-JVM_MAX_RAM=${1:-500m}
-JVM_HEAP_MIN=${2:-250m}
-JVM_HEAP_MAX=${3:-250m}
-JVM_METASPACE=${4:-128m}
-JVM_DNS_TTL=${5:-30}
+JVM_DNS_TTL=${1:-30}
 
 # If you want to be explicit about memory settings
 #-XX:MaxRam=${JVM_MAX_RAM} \
