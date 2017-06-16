@@ -1,7 +1,7 @@
 # Follows guidance from http://www.projectatomic.io/docs/docker-image-author-guidance/
 
-# Deal with PID 1 issue:
-FROM phusion/baseimage:latest
+# Base image off of the official Ubuntu-based image
+FROM azul/zulu-openjdk:8u131
 
 MAINTAINER Ron Kurr <kurr@kurron.org>
 
@@ -13,52 +13,25 @@ chown -R microservice:microservice /home/microservice
 # default to being in the user's home directory
 WORKDIR /home/microservice
 
-#
-# UTF-8 by default
-#
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-
-#
-# Pull Zulu OpenJDK binaries from official repository:
-#
-ENV DEBIAN_FRONTEND noninteractive
-
 # Set standard Java environment variables
 ENV JAVA_HOME /usr/lib/jvm/zulu-8-amd64
 ENV JDK_HOME /usr/lib/jvm/zulu-8-amd64
 
-# used to set common JVM tunings in the launch script
-ENV JVM_HEAP_MIN 128m
-ENV JVM_HEAP_MAX 512m
-ENV JVM_METASPACE 512m
-ENV JVM_CMS_OCCUPANCY 70
-ENV JVM_GC_LOG_PATH /var/logs
-ENV JVM_GC_LOG_FILE_COUNT 10
-ENV JVM_GC_LOG_FILE_SIZE 100M
-ENV JVM_DNS_TTL 30
-ENV JVM_JMX_HOST 127.0.0.1
-ENV JVM_JMX_PORT 9898
-ENV JVM_JMX_RMI_PORT 9999
+# show the JVM version, by default
+CMD ["java", "-version"]
 
-# default to showing the JDK version
-CMD ['java', '-version']
+# ---- watch your layers and put likely mutating operations here -----
 
-# this stuff changes and will create brand new layers
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9
-RUN echo "deb http://repos.azulsystems.com/ubuntu stable main" >> /etc/apt/sources.list.d/zulu.list
-RUN apt-get -qq update && \
-    apt-get -qqy install zulu-8=8.21.0.1 && \
-    apt-get clean
+# We need cURL to grab the Docker bits
+RUN apt-get -qq update
+RUN apt-get -qqy install curl
 
-# many uses of this container run Docker so let's install the binaries
-RUN curl -fsSLO https://get.docker.com/builds/Linux/x86_64/docker-17.04.0-ce.tgz && tar --strip-components=1 -xvzf docker-17.04.0-ce.tgz -C /usr/local/bin
-RUN curl -L "https://github.com/docker/compose/releases/download/1.13.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && chmod 0555 /usr/local/bin/docker-compose
+# many users of this container run Docker so let's install the binaries
+ENV DOCKER_VERSION=17.05.0-ce
+ENV COMPOSE_VERSION=1.13.0
+RUN curl -fsSLO https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION}.tgz && tar --strip-components=1 -xvzf docker-${DOCKER_VERSION}.tgz -C /usr/local/bin && chmod 0555 /usr/local/bin/docker
+RUN curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && chmod 0555 /usr/local/bin/docker-compose
 
+# remember to switch to the non-root user in child images
 # Switch to the non-root user
-USER microservice
-
-# Copy the default JVM launch script for those who don't want to write their own
-ADD launch-jvm.sh /home/microservice/launch-jvm.sh
+# USER microservice
