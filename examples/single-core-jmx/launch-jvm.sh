@@ -12,7 +12,7 @@ set -e
 # memory settings.
 
 JVM_DNS_TTL=${1:-30}
-JVM_HEAP=${2:-128m}
+JVM_HEAP=${2:-32m}
 JVM_JMX_PORT=${3:-2020}
 
 # If you want to be explicit about memory settings

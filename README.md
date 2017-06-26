@@ -118,16 +118,16 @@ and have the following observations. Test were run with
 `OpenJDK Runtime Environment (Zulu 8.21.0.1-linux64) (build 1.8.0_131-b11)`.
 
 1. Docker's `--memory` switch sets the cgroup settings
-1. `exec` into a container and run `mount | grep cgroup | grep memory`, `more /sys/fs/cgroup/memory/memory.limit_in_bytes`
+1. `exec` into a container and run `mount | grep cgroup | grep memory`, `more /sys/fs/cgroup/memory/memory.limit_in_bytes` to see the cgroup value
 1. JVM's `-XX:+UseCGroupMemoryLimitForHeap` only respects the cgroup settings when explicit settings are **not** provided
-1. setting `-Xms` and `-Xmx` can exceed the cgroup setting
-1. not specifing heap settings cause the JVM to allocate about half of the cgroup's value
+1. setting `-Xms` and `-Xmx` can exceed the cgroup setting and what Docker thinks you are using for memory
+1. not specifing heap settings cause the JVM to allocate a much smaller heap, anecdotally about half of the Docker allocation 
 
 Your situation will dictate what runtime switches to use. A scheduler, such as Kubernetes,
 will only understand the cgroup settings so you can either let the JVM figure out the heap
 based on what the scheduler assigns it or specify the heap settings explicitly.  If you
 specify the heap by hand and get it wrong by exceeding the amount of memory the scheduler
-thinks you want to use, your could cause an OOM situation with other containers.
+thinks you want to use, you could cause an OOM situation with other containers.
 Eventually, the JVM will catch up with the container world but until that day, we'll have
 to manage memory settings very carefully. 
 
