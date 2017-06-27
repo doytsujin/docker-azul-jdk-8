@@ -113,10 +113,10 @@ daemon.  Unfortunately, this is a security risk and goes against best practices
 but it is the only way I am aware of making docker-in-docker work.
 
 ## Example Usage (Ansible)
-If you need more control at deployment time you can define all the JVM settings
+If you need more control you can define all the JVM settings
 at deployment time.  Here is an example of Ansible playbook that does just that.
-Look in the examples folder for a working sample.  The idea is that a shell
-script is not needed to run the container.
+Look in the examples folder for a working sample.  The idea is that **a shell
+script is not needed to run the container**.
 
 ```
 ---
