@@ -100,71 +100,6 @@ or you will have signal issues.
 You can control how much CPU and RAM the container see via Docker's
 `--cpus`, `--memory` and `--memory-swap` switches.
 
-## Controlling Docker From Inside The Container
-If you need to run docker commands from inside your container, you will need
-to add a mount to the Docker daemon at container launch time.  Here is an
-example of the `docker run` switch needed:
-
-`--volume /var/run/docker.sock:/var/run/docker.sock`
-
-In addition to the mount, you will also have to be running as the root
-account or you will get permission errors when trying to access the Docker
-daemon.  Unfortunately, this is a security risk and goes against best practices
-but it is the only way I am aware of making docker-in-docker work.
-
-## Example Usage (Ansible)
-If you need more control you can define all the JVM settings
-at deployment time.  Here is an example of Ansible playbook that does just that.
-Look in the examples folder for a working sample.  The idea is that **a shell
-script is not needed to run the container**.
-
-```
----
-- name: Launch JVM
-  hosts: localhost
-  become: no
-  vars:
-      container_name: single-core-jdk-jmx-ansible
-      ram_in_bytes: 33554432
-      swap_memory_in_bytes: 0
-      dns_ttl: 30
-      jmx_port: 2020
-      image: singlecorejmxansible_single-core-jdk-jmx-ansible:latest
-  tasks:
-      - name: Stopping the container
-        shell: "docker stop {{ container_name }} || true"
-
-      - name: Removing the container
-        shell: "docker rm --force=true {{ container_name }} || true"
-
-      - name: Running the container
-        command: "docker run --cpus 1
-                             --detach
-                             --name {{ container_name }}
-                             --net host
-                             --rm
-                             --memory {{ ram_in_bytes }}
-                             --memory-swap {{ swap_memory_in_bytes }}
-                             --volume /var/run/docker.sock:/var/run/docker.sock
-                             {{ image }}
-                             java -server
-                                  -XX:+UnlockExperimentalVMOptions
-                                  -XX:+UseCGroupMemoryLimitForHeap
-                                  -XX:+ScavengeBeforeFullGC
-                                  -XX:+CMSScavengeBeforeRemark
-                                  -XX:+UseSerialGC
-                                  -XX:MinHeapFreeRatio=20
-                                  -XX:MaxHeapFreeRatio=40
-                                  -XX:GCTimeRatio=4
-                                  -XX:AdaptiveSizePolicyWeight=90
-                                  -Dsun.net.inetaddr.ttl={{ dns_ttl }}
-                                  -Dcom.sun.management.jmxremote.port={{ jmx_port }}
-                                  -Dcom.sun.management.jmxremote.rmi.port={{ jmx_port }}
-                                  -Dcom.sun.management.jmxremote.authenticate=false
-                                  -Dcom.sun.management.jmxremote.ssl=false
-                                  Hello"
-```
-
 ## Observed JVM Memory Behavior
 Using [VisualVM](https://visualvm.github.io/) I was able to watch the JVM's heap
 and have the following observations. Test were run with
@@ -200,5 +135,6 @@ This project is licensed under the
 
 # List of Changes
 
+* removed Docker, Docker Compose and Ansible from the image. Use the build image instead.
 * use `azul/zulu-openjdk:8u131` as the base image to be more Kubernetes friendly
 * update to OpenJDK 64-Bit Server VM (Zulu 8.21.0.1-linux64) (build 25.131-b11, mixed mode)
