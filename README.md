@@ -1,8 +1,8 @@
 # Overview
 This project is a simple Docker image that provides access to the
-[Azul Systems JDK](http://www.azul.com/downloads/zulu/).  It also bundles
-Docker Compose and Docker because many use cases involve accessing Docker
-from within Docker.
+[Azul Systems JDK](http://www.azul.com/downloads/zulu/).  It is intended
+for **running** JVM applications, not building and testing them. If you
+need to build a JVM application, [look at this project](https://github.com/kurron/docker-azul-jdk-8-build).
 
 
 # Prerequisites
