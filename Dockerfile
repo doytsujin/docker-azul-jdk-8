@@ -1,7 +1,7 @@
 # Follows guidance from http://www.projectatomic.io/docs/docker-image-author-guidance/
 
 # Base image off of the official Ubuntu-based image
-FROM azul/zulu-openjdk:8u131
+FROM azul/zulu-openjdk:8u144
 
 MAINTAINER Ron Kurr <kurr@kurron.org>
 
